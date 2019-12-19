@@ -1,0 +1,67 @@
+# Blender MTL File: 'Satellite.blend'
+# Material Count: 5
+
+newmtl Antenna
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_kd satellite_Antenna_BaseColor.jpg
+map_ks satellite_Antenna_Metallic.jpg
+map_bump satellite_Antenna_Normal.jpg
+
+newmtl Couro
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_kd satellite_Couro_BaseColor.jpg
+map_ks satellite_Couro_Metallic.jpg
+map_bump satellite_Couro_Normal.jpg
+
+newmtl Pinos
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_kd satellite_Pinos_BaseColor.jpg
+map_ks satellite_Pinos_Metallic.jpg
+map_bump satellite_Pinos_Normal.jpg
+
+newmtl Placas
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_kd satellite_Placas_BaseColor.jpg
+map_ks satellite_Placas_Metallic.jpg
+map_bump satellite_Placas_Normal.jpg
+
+newmtl Satélite
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_kd satellite_Satellite_baseColor.jpg
+map_ks satellite_Satelite_Metallic.jpg
+map_bump satellite_Satelite_Normal.jpg

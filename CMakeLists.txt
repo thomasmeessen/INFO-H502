@@ -1,0 +1,40 @@
+cmake_minimum_required (VERSION 3.15)
+project (project)
+
+
+
+# OpenGL
+find_package(OpenGL REQUIRED)
+# GLM
+find_package(glm REQUIRED)
+# GLFW
+find_package(glfw3 REQUIRED)
+
+find_package(GLEW REQUIRED)
+
+# ASSIMP
+cmake_policy(SET CMP0012 OLD)
+find_package(assimp REQUIRED)
+#message(STATUS "Found(${assimp_FOUND}) ASSIMP ${assimp_FIND_VERSION}")
+cmake_policy(SET CMP0012 NEW)
+#find_package(FreeGLUT REQUIRED)
+
+include_directories("${PROJECT_SOURCE_DIR}/Include" "${PROJECT_SOURCE_DIR}/vendors/stb")
+
+message("${PROJECT_SOURCE_DIR}/vendors/stb")
+message("/home/tmeessen/University/PersonalAndAcademicNotesFrom2019_2010/VirtualReality/Project/vendors/stb")
+
+set(SRC_FILES
+        Sources/main.cpp
+        Sources/Shader.cpp
+        Sources/skybox.cpp
+        Sources/shadow.cpp
+        Sources/thruster_particles.cpp
+        Sources/weather_particles.cpp
+        )
+add_executable(project ${SRC_FILES})
+
+
+add_dependencies(project OpenGL::OpenGL)
+
+target_link_libraries(project OpenGL ${CMAKE_DL_LIBS} glfw glm GL GLEW assimp)
