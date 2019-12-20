@@ -79,6 +79,10 @@ void Shader::setMatrix3(const GLchar *name, const glm::mat3 &matrix) {
     glUniformMatrix3fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
+void Shader::setList3(const GLchar *name, std::vector<glm::vec3> data) {
+    glUniform3fv(glGetUniformLocation(ID, name),50, (float*) &data[0] );
+}
+
 
 void Shader::checkCompileErrors(const GLuint &object, std::string type) {
 	GLint success;

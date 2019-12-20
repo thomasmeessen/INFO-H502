@@ -26,7 +26,7 @@ int main(int argc, char * argv[]) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    auto mWindow = glfwCreateWindow(1024, 1024, "INFO-H-502 - Thomas Meessen", nullptr, nullptr);
+    auto mWindow = glfwCreateWindow(1920, 1080, "INFO-H-502 - Thomas Meessen", nullptr, nullptr);
     // Check for Valid Context
     if (mWindow == nullptr) {
         fprintf(stderr, "Failed to Create OpenGL Context");
@@ -99,13 +99,14 @@ int main(int argc, char * argv[]) {
     parShader.compile();
     ParticleManager particleManager;
     particleManager.init();
+
     // ## Particles weather effect
-    string weather_vert = prefix + "Sources/Shaders/particules_thruster.vert";
-    string weather_frag = prefix + "Sources/Shaders/particules_thruster.frag";
-    Shader weather_shader (partVert.c_str(), partFrag.c_str());
+    string weather_vert = prefix + "Sources/Shaders/particles_athmo.vert";
+    string weather_frag = prefix + "Sources/Shaders/particles_athmo.frag";
+    Shader weather_shader (weather_vert.c_str(), weather_frag.c_str());
     weather_shader.compile();
-    glm::vec3 weather_origin(-10.0f,0,0);
-    weatherManager weather_manager(weather_origin);
+    glm::vec3 weather_origin(5.0f,0,0);
+    weatherManager weather_manager(weather_origin, glm::vec3(-1,0,0) );
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
@@ -126,7 +127,7 @@ int main(int argc, char * argv[]) {
         // ### Camera rotation around Y axis
         angle = (sens_angle == 1)? angle +0.003f: angle -0.003f;
         sens_angle = (abs(angle) > 6.0)? sens_angle *-1: sens_angle;
-        glm::vec3 viewerPos (1*cos(angle),0.9,1*sin(angle));
+        glm::vec3 viewerPos (1.8*cos(angle),1.5,1.8*sin(angle));
         viewCamera = glm::lookAt(
                 viewerPos, // Camera is at variable position, in World Space
                 glm::vec3(0.0f,0.0f,0.0f), // and looks at the origin
@@ -146,11 +147,14 @@ int main(int argc, char * argv[]) {
         aquaModel.Draw(simpleDepht);
         glBindFramebuffer(GL_FRAMEBUFFER, 0); // Close FBO
 
-
-        // ### Scene Rendering
-
+        // ### Scene cleanup
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // ### Space weather effect
+        auto luminescent_part = weather_manager.draw(weather_shader, Projection * viewCamera );
+
+        // ### Satellite Rendering
         shader.use();
         // -- Linking the depthMap to reserved 0 slot
         glActiveTexture(GL_TEXTURE0);
@@ -163,6 +167,7 @@ int main(int argc, char * argv[]) {
         shader.setMatrix4("lightSpace", lightSpace );
         shader.setMatrix4("Model", glm::mat4(Model));
         shader.setVector3f("viewPos",viewerPos );
+        shader.setList3("light_part_list", luminescent_part);
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         aquaModel.Draw(shader);

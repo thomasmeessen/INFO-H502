@@ -29,7 +29,7 @@ private:
     std::vector<Particle> particlesContainer;
     std::vector<glm::vec3> particlesPos;
     std::vector<glm::vec4> particlesCol;
-    int nbrParticlesMax = 1100;
+    int nbrParticlesMax = 1200;
     int nbrParticles = 0;
     GLuint particleVAO;
     GLuint particles_position_buffer;

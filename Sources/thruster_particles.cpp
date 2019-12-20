@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
@@ -12,9 +11,6 @@
 void ParticleManager::draw(Shader particleShader, glm::mat4 mvp) {
 
     updateBuffer();
-
-
-
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     particleShader.use();
@@ -54,8 +50,6 @@ void ParticleManager::draw(Shader particleShader, glm::mat4 mvp) {
 }
 
 void ParticleManager::init() {
-    // 1 = (-1.688, ,-0.17, 0.17
-    // 2 = (-1.688, 0.047, -0.24015
     // Lazyness cube
     static const GLfloat g_vertex_buffer_data[] = {
             -1.f, 1.f, 1.f,     // Front-top-left

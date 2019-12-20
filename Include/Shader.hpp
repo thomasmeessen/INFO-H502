@@ -7,6 +7,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
 
 
 // Simple shader class from http://www.learnopengl.com/ with a few tweaks
@@ -38,6 +39,8 @@ public:
 
 	void setMatrix4(const GLchar *name, const glm::mat4 &matrix);
     void setMatrix3(const GLchar *name, const glm::mat3 &matrix);
+
+    void setList3(const GLchar *name, std::vector<glm::vec3> data);
 private:
 	// Checks if compilation or linking failed and if so, print the error logs
 	void checkCompileErrors(const GLuint &object, std::string type);

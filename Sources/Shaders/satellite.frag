@@ -3,6 +3,8 @@ in vec2 texCoord;
 in vec3 fragPos;
 in mat3 TBN;
 in vec4 FragPosLightSpace;
+// Weather effect
+in vec3 closest_light;
 
 out vec4 color;
 
@@ -90,7 +92,15 @@ void main(){
     //-- Shadow
     float shadow = ShadowCalculation(FragPosLightSpace);
     vec4 thruster_effect = thruster_diffuse_color(fragPos, normal);
-    if (length(thruster_effect) > 0){
+
+
+    if(length(closest_light) > 0.0f){
+        vec3 part_dir = normalize( closest_light - fragPos);
+        float part_dist = length(closest_light - fragPos);
+        float part_influence = max(dot(part_dir, normal ), 0.0) * min(0.8,(1 - part_dist/0.5));
+        color =  ((ambientStrength + part_influence + (diffuseStrength) * (1.0 - shadow)) * objectColor + spec * specularStrength * (1.0-shadow)* specColor);
+    }
+    else if (length(thruster_effect) > 0){
         color =  (ambientStrength * objectColor) + thruster_effect;
     } else{
         color =  ((ambientStrength + diffuseStrength * (1.0 - shadow)) * objectColor + spec * specularStrength * (1.0-shadow)* specColor);

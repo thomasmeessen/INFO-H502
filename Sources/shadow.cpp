@@ -9,7 +9,7 @@ void generateShadowFBO(GLuint &vbo, GLuint &tex){
 
     glGenFramebuffers(1, &vbo);
 
-    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+    const unsigned int SHADOW_WIDTH = 1920, SHADOW_HEIGHT = 1080;
 
     unsigned int depthMap;
     glGenTextures(1, &depthMap);
