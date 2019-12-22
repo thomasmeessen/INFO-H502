@@ -47,13 +47,14 @@ int main(int argc, char * argv[]) {
     }
 
 
-    // ## Loading satellite
+    // ## SATELLITE
     // -- Model
     string prefix = "../Resources/";
     string strModelPath = prefix + "model/satellite/Satellite.obj";
     const GLchar *modelPath = strModelPath.c_str();
     Model aquaModel(modelPath );
     // -- Reduction in size
+    // Natural orientation is X axis
     glm::mat4 Model = glm::scale(glm::mat4(1.0f), glm::vec3(0.09f, 0.09f, 0.09f));
     // -- Shader
     prefix = "../";
@@ -92,7 +93,7 @@ int main(int argc, char * argv[]) {
     glm::mat4 lightSpace = lightProjection * lightView;
 
 
-    // ## Particles Thruster
+    // ## Particles Thruster Effect loading + initialisation
     string partVert = prefix + "Sources/Shaders/particules_thruster.vert";
     string partFrag = prefix + "Sources/Shaders/particules_thruster.frag";
     Shader parShader (partVert.c_str(), partFrag.c_str());
@@ -100,19 +101,19 @@ int main(int argc, char * argv[]) {
     ParticleManager particleManager;
     particleManager.init();
 
+    // # WEATHER
     // ## Particles weather effect
     string weather_vert = prefix + "Sources/Shaders/particles_athmo.vert";
     string weather_frag = prefix + "Sources/Shaders/particles_athmo.frag";
     Shader weather_shader (weather_vert.c_str(), weather_frag.c_str());
     weather_shader.compile();
-    glm::vec3 weather_origin(5.0f,0,0);
-    weatherManager weather_manager(weather_origin, glm::vec3(-1,0,0) );
+    // Origin and direction of the flux
+    weatherManager weather_manager(glm::vec3(10.0f,0,0), glm::vec3(-1,0,0) );
 
-    // Enable depth test
+    // ## Enable depth test
     glEnable(GL_DEPTH_TEST);
     // Accept fragment if it closer to the camera than the former one
     glDepthFunc(GL_LESS);
-
 
     // ## Camera
     float angle = 0;
@@ -152,7 +153,7 @@ int main(int argc, char * argv[]) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // ### Space weather effect
-        auto luminescent_part = weather_manager.draw(weather_shader, Projection * viewCamera );
+        auto luminescent_particles_position = weather_manager.draw(weather_shader, Projection * viewCamera, Model );
 
         // ### Satellite Rendering
         shader.use();
@@ -167,7 +168,7 @@ int main(int argc, char * argv[]) {
         shader.setMatrix4("lightSpace", lightSpace );
         shader.setMatrix4("Model", glm::mat4(Model));
         shader.setVector3f("viewPos",viewerPos );
-        shader.setList3("light_part_list", luminescent_part);
+        shader.setList3("light_part_list", luminescent_particles_position);
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         aquaModel.Draw(shader);
@@ -175,6 +176,8 @@ int main(int argc, char * argv[]) {
 
         // ### Render thrust effect
         particleManager.draw(parShader,  Projection * viewCamera * Model );
+
+
 
 
         // ### Render Sky-Box
