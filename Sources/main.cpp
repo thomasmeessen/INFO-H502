@@ -26,7 +26,9 @@ int main(int argc, char * argv[]) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    auto mWindow = glfwCreateWindow(1920, 1080, "INFO-H-502 - Thomas Meessen", nullptr, nullptr);
+    int scr_width = 1920;
+    int scr_height = 1080;
+    auto mWindow = glfwCreateWindow(scr_width, scr_height, "INFO-H-502 - Thomas Meessen", nullptr, nullptr);
     // Check for Valid Context
     if (mWindow == nullptr) {
         fprintf(stderr, "Failed to Create OpenGL Context");
@@ -114,7 +116,14 @@ int main(int argc, char * argv[]) {
     glEnable(GL_DEPTH_TEST);
     // Accept fragment if it closer to the camera than the former one
     glDepthFunc(GL_LESS);
-
+    // ## HDR
+    /*
+    GLuint hdr_frame_buffer;
+    glGenFramebuffers(1, &hdr_frame_buffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, hdr_frame_buffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, scr_width, scr_height, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    */
     // ## Camera
     float angle = 0;
     glm::mat4 viewCamera;

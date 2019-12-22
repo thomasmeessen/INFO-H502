@@ -5,7 +5,7 @@
 #ifndef PROJECT_SHADOW_HPP
 #define PROJECT_SHADOW_HPP
 
-void generateShadowFBO (GLuint &vbo, GLuint &tex);
+void generateShadowFBO (GLuint &frame_buffer, GLuint &tex);
 
 void drawFBO(GLuint fbo);
 

@@ -32,7 +32,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // check whether current frag pos is in shadow
-    float bias = 0.004; // Shadow acne
+    float bias = 0.005; // Shadow acne
     float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
     return shadow;
 }
@@ -75,35 +75,34 @@ void main(){
     vec4 objectColor = texture(texture_diffuse1, texCoord);
     // Sample Metallic texture
     vec4 specColor = texture(texture_specular1, texCoord);
-    //-- Diffuse light
+
+    // DIFFUSE
     // Cosmetic adjustment for diffusive importance
-    float diffStrength = 0.48f;
+    float diffStrength = 0.4f;
     // direction of the main light source
     vec3 lightDir = normalize(lightPos - fragPos);
     // Projection of pixel normal on the light direction and cosmetic adjustment
     float diffuseStrength = max(dot(lightDir, normal ), 0.0) * diffStrength;
-    // -- Specular light
-    float specularStrength = 0.7f;
+
+    // SPECULAR
     // direction of the camera
     vec3 viewDir = normalize(viewPos - fragPos);
     // Direction of the ideal reflection of light on the pixel
     vec3 reflectDir = reflect(-normalize(lightDir), normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32)  ;
-    //-- Shadow
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 48)  ;
+
+    // SHADOW
     float shadow = ShadowCalculation(FragPosLightSpace);
+
+
+    // ambient + diffuse (main)
+    color = (ambientStrength + diffuseStrength * (1.0 - shadow)) * objectColor ;
+    // specular (main)
+    color += spec * (1.0-shadow) * specColor;
+    // Thruster effect
     vec4 thruster_effect = thruster_diffuse_color(fragPos, normal);
-
-
-    if(length(closest_light) > 0.0f){
-        vec3 part_dir = normalize( closest_light - fragPos);
-        float part_dist = length(closest_light - fragPos);
-        float part_influence = max(dot(part_dir, normal ), 0.0) * min(0.8,(1 - part_dist/0.5));
-        color =  ((ambientStrength + part_influence + (diffuseStrength) * (1.0 - shadow)) * objectColor + spec * specularStrength * (1.0-shadow)* specColor);
+    if (length(thruster_effect) > 0){
+        color += thruster_effect;
     }
-    else if (length(thruster_effect) > 0){
-        color =  (ambientStrength * objectColor) + thruster_effect;
-    } else{
-        color =  ((ambientStrength + diffuseStrength * (1.0 - shadow)) * objectColor + spec * specularStrength * (1.0-shadow)* specColor);
 
-    }
  }

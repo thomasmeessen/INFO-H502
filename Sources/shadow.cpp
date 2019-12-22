@@ -5,9 +5,9 @@
 
 using namespace std;
 
-void generateShadowFBO(GLuint &vbo, GLuint &tex){
+void generateShadowFBO(GLuint &frame_buffer, GLuint &tex){
 
-    glGenFramebuffers(1, &vbo);
+    glGenFramebuffers(1, &frame_buffer);
 
     const unsigned int SHADOW_WIDTH = 1920, SHADOW_HEIGHT = 1080;
 
@@ -21,7 +21,7 @@ void generateShadowFBO(GLuint &vbo, GLuint &tex){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, vbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);

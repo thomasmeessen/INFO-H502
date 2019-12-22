@@ -138,7 +138,7 @@ void weatherManager::detectCollision(const glm::mat4 &model) {
 weather_particles::weather_particles(glm::vec3 spawn_pos, glm::vec3 direction) {
     glm::vec3 perpendicular_plane_axe_1 (0,1,0);
     glm::vec3 perpendicular_plane_axe_2 (0,0,1);
-    if (rand()%30  == 1){
+    if (rand()%20  == 1){
 
         position = spawn_pos + perpendicular_plane_axe_1 * (0.16f - (float) (rand() % 160) / 500.0f)
                    + perpendicular_plane_axe_2 * (0.16f - (float) (rand() % 160) / 500.0f);
@@ -149,7 +149,7 @@ weather_particles::weather_particles(glm::vec3 spawn_pos, glm::vec3 direction) {
                    + perpendicular_plane_axe_2 * (1 - (float) (rand() % 200) / 100.0f)
                    + direction * (1 - (float) (rand() % 40) / 10.0f);
         // a range of speed
-        this->direction = direction * ( 0.03f + (float)(rand()%100) /1000.0f)
+        this->direction = direction * ( 0.01f + (float)(rand()%100) /1000.0f)
                           + perpendicular_plane_axe_1 * (0.005f - (float)(rand()%100) /10000.0f)
                           + perpendicular_plane_axe_2 * (0.005f - (float)(rand()%100) /10000.0f);
     }

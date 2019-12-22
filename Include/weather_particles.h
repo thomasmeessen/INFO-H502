@@ -12,7 +12,7 @@ struct weather_particles{
     glm::vec3 position;
     glm::vec3 direction;
     bool collided = false;
-    int lifetime_collided = 100;
+    int lifetime_collided = 80;
     glm::vec4 color = glm::vec4 (0.5,0.5,0.8,1.0);
     explicit weather_particles(glm::vec3 spawn_pos, glm::vec3 direction);
 };
@@ -22,7 +22,7 @@ private:
     std::vector<weather_particles> particles;
     std::vector<glm::vec3> particlesPos;
     std::vector<glm::vec4> particlesCol;
-    int nb_particle_max = 300;
+    int nb_particle_max = 100;
     glm::vec3 weather_origin, weather_direction;
     GLuint particleVAO;
     GLuint particles_position_buffer;
