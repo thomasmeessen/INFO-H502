@@ -62,6 +62,7 @@ int main(int argc, char * argv[]) {
     prefix = "../";
     string strTexShaderVertPath = prefix + "Sources/Shaders/satellite.vert";
     string strTexShaderFragPath = prefix + "Sources/Shaders/satellite.frag";
+    //string strTexShaderGeomPath = prefix + "Sources/Shaders/satellite.geom";
     Shader shader(strTexShaderVertPath.c_str(),
                   strTexShaderFragPath.c_str());
     shader.compile();
@@ -107,7 +108,8 @@ int main(int argc, char * argv[]) {
     // ## Particles weather effect
     string weather_vert = prefix + "Sources/Shaders/particles_athmo.vert";
     string weather_frag = prefix + "Sources/Shaders/particles_athmo.frag";
-    Shader weather_shader (weather_vert.c_str(), weather_frag.c_str());
+    string weather_geom = prefix + "Sources/Shaders/particles_athmo.geom";
+    Shader weather_shader (weather_vert.c_str(), weather_frag.c_str(), weather_geom.c_str());
     weather_shader.compile();
     // Origin and direction of the flux
     weatherManager weather_manager(glm::vec3(10.0f,0,0), glm::vec3(-1,0,0) );
