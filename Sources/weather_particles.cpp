@@ -32,12 +32,16 @@ void weatherManager::init() {
     glBindBuffer(GL_ARRAY_BUFFER, particleVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-// The VBO containing the positions and sizes of the particles
-
+    // The VBO containing the positions and sizes of the particles
     glGenBuffers(1, &particles_position_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, particles_position_buffer);
-    // Initialize with empty buffer : it will be updated later, each frame.
-    glBufferData(GL_ARRAY_BUFFER, nb_particle_max * sizeof(glm::vec3), nullptr, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, nb_particle_max * sizeof(glm::vec3), nullptr, GL_STREAM_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glGenBuffers(1, &particles_time_collided_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, particles_time_collided_buffer);
+    glBufferData(GL_ARRAY_BUFFER, nb_particle_max * sizeof(GLuint), nullptr, GL_STREAM_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -48,15 +52,17 @@ void weatherManager::init() {
 
 std::vector<glm::vec3> weatherManager::draw(Shader shader, const glm::mat4 &view_projection, const glm::mat4 &model) {
 
+    // COMPUTE COLLISION
     detectCollision(model);
 
     // BUFFER UPDATE AND PARTICLES MOVEMENT
     particlesPos.clear();
     particlesCol.clear();
+    particles_collided_time.clear();
+
     auto it = particles.begin();
     while (it != particles.end()){
-        // UPDATE
-        // if particle is collided
+        // UPDATE POSITION AND REMOVED CRASHED && OLD Particles
         if (!it->collided)
         {
             it->position += it->direction;
@@ -66,20 +72,24 @@ std::vector<glm::vec3> weatherManager::draw(Shader shader, const glm::mat4 &view
                 particles.erase(it);
             }
         }
+        // REMOVE OUT OF SIGHT PARTICLE AND UPDATE BUFFER STEP 1 - create dense struct
         if (it->position.x < -13){
             particles.erase(it);
         } else {
             particlesPos.emplace_back(it->position);
             particlesCol.emplace_back(it->color);
+            particles_collided_time.emplace_back(it->lifetime_collided);
             ++it;
         }
     }
 
-    // REFILL
+    // REFILL TO REACH MAX NUMBER OF PART
     while(particles.size()< nb_particle_max){
         particles.emplace_back(weather_particles(weather_origin, weather_direction));
     }
 
+
+    // BUFFER STEP 2
     shader.use();
     shader.setMatrix4("view_projection", view_projection);
     glBindVertexArray(particleVAO);
@@ -96,11 +106,19 @@ std::vector<glm::vec3> weatherManager::draw(Shader shader, const glm::mat4 &view
     glBufferSubData(GL_ARRAY_BUFFER, 0, particles.size() * sizeof(GLfloat) * 3, &particlesPos[0]);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
+    // 3nd attribute buffer : information about particle explosion
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, particles_time_collided_buffer);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, particles.size() * sizeof(GLuint), &particles_collided_time[0]);
+    glVertexAttribIPointer(2, 1, GL_INT, GL_FALSE, 0);
+
 
     // Always reuse the same vertex
     glVertexAttribDivisor(0, 0);
     // Change the position
     glVertexAttribDivisor(1, 1);
+    // Change the timer
+    glVertexAttribDivisor(2, 1);
     glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 14, particles.size());
     glBindVertexArray(0);
     return particlesPos;

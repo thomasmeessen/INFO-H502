@@ -22,10 +22,12 @@ private:
     std::vector<weather_particles> particles;
     std::vector<glm::vec3> particlesPos;
     std::vector<glm::vec4> particlesCol;
+    std::vector<GLuint> particles_collided_time;
     int nb_particle_max = 100;
     glm::vec3 weather_origin, weather_direction;
     GLuint particleVAO;
     GLuint particles_position_buffer;
+    GLuint particles_time_collided_buffer;
     GLuint particleVBO;
 
     void detectCollision(const glm::mat4 &Model);
