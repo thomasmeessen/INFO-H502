@@ -8,7 +8,8 @@ struct Particle {
     glm::vec4 Color;
     int life = 0;
     Particle(glm::vec3 pos)
-            : Position(pos), Velocity(-0.007f,0.0f,0.0f), Color(0.0f,0.99f,0.8f,1.0f) { }
+            : Position(pos), Velocity(-0.007f,0.0,0.0),
+            Color(0.0f,0.99f,0.8f,1.0f) {}
     void update_color(){
         glm::vec4 purple = glm::vec4(128.0f/255.0f,0.0f,107.0/255.0f,0.9), yellow = glm::vec4(1.0f,1.0f,0,0.4);
         glm::vec4 yellow_transparant = glm::vec4(255,255,0,0.2);

@@ -97,8 +97,10 @@ void ParticleManager::fill() {
     }
 }
 
+// -0.007f,0.002 - (float)(rand()%4) /1000.0f, 0.002 - (float)(rand()%4) /1000.0f
+
 void ParticleManager::updateBuffer() {
-    if(this->nbrParticles < nbrParticlesMax -3){
+    if( particlesContainer.size() < nbrParticlesMax - 5){
         for (auto thruster : thruster_position){
             do {
                 Particle new_particle(thruster);
@@ -106,6 +108,7 @@ void ParticleManager::updateBuffer() {
                 float dx = ((float) (rand() % 20) - 10.0f) / inv_scale, dy =
                         ((float) (rand() % 20) - 10.0f) / inv_scale, dz = ((float) (rand() % 20) - 10.0f) / inv_scale;
                 new_particle.Position += glm::vec3(dx, dy, dz);
+                new_particle.Velocity += glm::vec3 (-0.007f,0.001 - (float)(rand()%10) /5000.0f, 0.001 - (float)(rand()%10) /5000.0f );
                 particlesContainer.push_back(new_particle);
                 nbrParticles++;
             }while (rand()%2 );
