@@ -23,7 +23,7 @@ private:
     std::vector<glm::vec3> particlesPos;
     std::vector<glm::vec4> particlesCol;
     std::vector<GLuint> particles_collided_time;
-    int nb_particle_max = 100;
+    int nb_particle_max = 80;
     glm::vec3 weather_origin, weather_direction;
     GLuint particleVAO;
     GLuint particles_position_buffer;

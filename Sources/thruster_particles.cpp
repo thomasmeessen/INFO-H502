@@ -111,7 +111,7 @@ void ParticleManager::updateBuffer() {
                 new_particle.Velocity += glm::vec3 (-0.007f,0.001 - (float)(rand()%10) /5000.0f, 0.001 - (float)(rand()%10) /5000.0f );
                 particlesContainer.push_back(new_particle);
                 nbrParticles++;
-            }while (rand()%2 );
+            }while (rand()%4 );
         }
     }
     //std::cout<<"fin du spawning" << std::endl;
@@ -119,7 +119,7 @@ void ParticleManager::updateBuffer() {
     particlesCol.clear();
     auto it = particlesContainer.begin();
     while (it != particlesContainer.end()){
-        if ( nbrParticles < nbrParticlesMax - 20){
+        if ( nbrParticles < nbrParticlesMax - 10){
             it->update_color();
             it->Position += it->Velocity;
             it->life++;

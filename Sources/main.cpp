@@ -13,6 +13,14 @@
 using namespace std;
 
 
+bool firstMouse = true;
+glm::vec3 viewerPos;
+float lastX, lastY, yaw, pitch;
+glm::vec3 cameraFront;
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+float fov = 45;
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
 int main(int argc, char * argv[]) {
 
     // Load GLFW and Create a Window
@@ -34,6 +42,7 @@ int main(int argc, char * argv[]) {
         fprintf(stderr, "Failed to Create OpenGL Context");
         return EXIT_FAILURE;
     }
+
     // Create Context and Load OpenGL Functions
     glfwMakeContextCurrent(mWindow);
     fprintf(stderr, "OpenGL %s\n", glGetString(GL_VERSION));
@@ -47,6 +56,12 @@ int main(int argc, char * argv[]) {
         /* Problem: glewInit failed, something is seriously wrong. */
         fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
     }
+
+    // ## MOUSE -- camera setting
+    glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(mWindow, mouse_callback);
+    glfwSetScrollCallback(mWindow, scroll_callback);
+
 
 
     // ## SATELLITE
@@ -128,21 +143,20 @@ int main(int argc, char * argv[]) {
     */
     // ## Camera
     float angle = 0;
-    glm::mat4 viewCamera;
-    glm::mat4 Projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 100.0f);
 
-
-
-    int  sens_angle = 1;
     while (glfwWindowShouldClose(mWindow) == 0) {
 
+
         // ### Camera rotation around Y axis
-        angle = (sens_angle == 1)? angle +0.003f: angle -0.003f;
-        sens_angle = (abs(angle) > 6.0)? sens_angle *-1: sens_angle;
-        glm::vec3 viewerPos (1.8*cos(angle),1.5,1.8*sin(angle));
-        viewCamera = glm::lookAt(
+        angle += 0.003f;
+        viewerPos = glm::vec3(1.5*cos(angle),1.5 * cos(angle),1.5*sin(angle));
+        if(firstMouse){
+            cameraFront = - viewerPos;
+        }
+        glm::mat4 Projection = glm::perspective(glm::radians(fov), (float) width / (float)height, 0.1f, 100.0f);
+        glm::mat4 viewCamera = glm::lookAt(
                 viewerPos, // Camera is at variable position, in World Space
-                glm::vec3(0.0f,0.0f,0.0f), // and looks at the origin
+                viewerPos + cameraFront, // and looks at the origin
                 glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
         );
 
@@ -214,4 +228,47 @@ int main(int argc, char * argv[]) {
 }
 
 
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    if(firstMouse)
+    {
+    lastX = xpos;
+    lastY = ypos;
+    pitch = glm::degrees(asin(-glm::normalize(viewerPos).y));
+    yaw = glm::degrees(acos(-glm::normalize(viewerPos).x / cos(glm::radians(pitch))));
+    firstMouse = false;
+    }
 
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+    lastX = xpos;
+    lastY = ypos;
+
+    float sensitivity = 0.05;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw   += xoffset;
+    pitch += yoffset;
+
+    if(pitch > 89.0f)
+    pitch = 89.0f;
+    if(pitch < -89.0f)
+    pitch = -89.0f;
+
+    glm::vec3 front;
+    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front.y = sin(glm::radians(pitch));
+    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(front);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    if(fov >= 1.0f && fov <= 45.0f)
+        fov -= yoffset;
+    if(fov <= 1.0f)
+        fov = 1.0f;
+    if(fov >= 45.0f)
+        fov = 45.0f;
+}
