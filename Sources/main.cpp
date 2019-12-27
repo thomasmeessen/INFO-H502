@@ -13,13 +13,14 @@
 using namespace std;
 
 
-bool firstMouse = true;
+bool reset_orientation = true, auto_move = false;
 glm::vec3 viewerPos;
 float lastX, lastY, yaw, pitch;
 glm::vec3 cameraFront;
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 float fov = 45;
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void process_key(GLFWwindow* window, float &angle);
 
 int main(int argc, char * argv[]) {
 
@@ -145,12 +146,12 @@ int main(int argc, char * argv[]) {
     float angle = 0;
 
     while (glfwWindowShouldClose(mWindow) == 0) {
-
+        process_key(mWindow, angle);
 
         // ### Camera rotation around Y axis
-        angle += 0.003f;
+        angle = (auto_move)? angle + 0.0025f: angle;
         viewerPos = glm::vec3(1.5*cos(angle),1.5 * cos(angle),1.5*sin(angle));
-        if(firstMouse){
+        if(reset_orientation){
             cameraFront = - viewerPos;
         }
         glm::mat4 Projection = glm::perspective(glm::radians(fov), (float) width / (float)height, 0.1f, 100.0f);
@@ -218,7 +219,6 @@ int main(int argc, char * argv[]) {
         glBindVertexArray(0);
         glDepthFunc(GL_LESS);
 
-
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
@@ -230,13 +230,13 @@ int main(int argc, char * argv[]) {
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    if(firstMouse)
+    if(reset_orientation)
     {
     lastX = xpos;
     lastY = ypos;
     pitch = glm::degrees(asin(-glm::normalize(viewerPos).y));
     yaw = glm::degrees(acos(-glm::normalize(viewerPos).x / cos(glm::radians(pitch))));
-    firstMouse = false;
+        reset_orientation = false;
     }
 
     float xoffset = xpos - lastX;
@@ -271,4 +271,31 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
         fov = 1.0f;
     if(fov >= 45.0f)
         fov = 45.0f;
+}
+
+void process_key(GLFWwindow* window, float &angle){
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+        reset_orientation = true;
+        angle = 0.0f;
+    }
+    if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        angle = 180.0f;
+        reset_orientation = true;
+    }
+    if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        angle = 300.0f;
+        reset_orientation = true;
+    }
+    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        angle = 90.0f;
+        reset_orientation = true;
+    }
+    if(glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+        auto_move = true;
+    }
+    if(glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
+        auto_move = false;
+    }
 }
