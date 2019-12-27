@@ -143,7 +143,7 @@ int main(int argc, char * argv[]) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     */
     // ## Camera
-    float angle = 0;
+    float angle = 0.1f;
 
     while (glfwWindowShouldClose(mWindow) == 0) {
         process_key(mWindow, angle);
@@ -278,7 +278,7 @@ void process_key(GLFWwindow* window, float &angle){
         glfwSetWindowShouldClose(window, true);
     if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
         reset_orientation = true;
-        angle = 0.0f;
+        angle = 0.1f;
     }
     if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
         angle = 180.0f;
