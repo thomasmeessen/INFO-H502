@@ -19,6 +19,10 @@ find_package(assimp REQUIRED)
 cmake_policy(SET CMP0012 NEW)
 #find_package(FreeGLUT REQUIRED)
 
+include(ExternalProject)
+include( ${CMAKE_CURRENT_SOURCE_DIR}/External-stbImage.cmake)
+
+
 include_directories("${PROJECT_SOURCE_DIR}/Include" "${PROJECT_SOURCE_DIR}/vendors/stb")
 
 message("${PROJECT_SOURCE_DIR}/vendors/stb")
@@ -35,6 +39,6 @@ set(SRC_FILES
 add_executable(project ${SRC_FILES})
 
 
-add_dependencies(project OpenGL::OpenGL)
+add_dependencies(project OpenGL::OpenGL stbImage)
 
 target_link_libraries(project OpenGL ${CMAKE_DL_LIBS} glfw glm GL GLEW assimp)
