@@ -1,4 +1,4 @@
-message( "External project - GTest" )
+message( "External project - STBImage" )
 
 ExternalProject_Add(stbImage
         GIT_REPOSITORY https://github.com/nothings/stb.git

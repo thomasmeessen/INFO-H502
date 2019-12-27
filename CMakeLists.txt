@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.15)
-project (project)
+project ("INFO H-502 (ULB) - Thomas Meessen")
 
 
 
@@ -25,8 +25,6 @@ include( ${CMAKE_CURRENT_SOURCE_DIR}/External-stbImage.cmake)
 
 include_directories("${PROJECT_SOURCE_DIR}/Include" "${PROJECT_SOURCE_DIR}/vendors/stb")
 
-message("${PROJECT_SOURCE_DIR}/vendors/stb")
-message("/home/tmeessen/University/PersonalAndAcademicNotesFrom2019_2010/VirtualReality/Project/vendors/stb")
 
 set(SRC_FILES
         Sources/main.cpp
