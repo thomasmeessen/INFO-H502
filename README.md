@@ -15,16 +15,24 @@ In the context of a object spinning on himself illuminated by a distant light so
 - Loading a obj/mtl file
 - Implementing shader that use the Phong reflection model 
 - Exploiting the content of normal map
+
 ![image of a solar panel with illuminated details](img/bumpmap_phong.png)
+
 - Render the light viewpoint into a depth map to add shadows to the scene
+
 ![the shadow casted by a solar pannel](img/shadows.png)
+
 - Textured cube-map around the object
 - Particle streams vaguely imitating a thruster flame
+
 ![4 jets of particles](img/particles.png)
+
 - Non realistic weather-like particle system to create context for collision.
 - Particle collision with a dish (modelled as a cylinder), the particle stop at an adequate position and do not clip the model ( interpolated and fixed position inside the model box)
 - Geometry shader create a explosion effect from a cube using subdivision of triangle primitive.
+
 ![3 explosion of particle as they bump into the satellite](img/explosion.png)
+
 ### Program usage
 
 - Choose camera preset using directional arrows
