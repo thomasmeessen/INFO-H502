@@ -1,4 +1,4 @@
-# INFO H52 - Technical subjects on virtual reality
+# INFO H502 - Technical subjects on virtual reality
 ## Introduction
 
 ### Build 
@@ -6,7 +6,7 @@
 Dependencies: Opengl, Glew, glfw3, glm, assimp.
 External project used: stbImage.
 
-The code is provided with a CMake build system
+The code is provided with the CMake build system
 
 ### Milestone reached
 
@@ -27,16 +27,19 @@ In the context of a object spinning on himself illuminated by a distant light so
 - Choose camera preset using directional arrows
 - Activate camera auto-motion by pressing enter and stop it by pressing backspace
 - Orientation and fov using the mouse
+- Press Esc to quit
 
 ## Code Highlights
 
 ### Shadow
 
-The main configuration for computing the depth map is done in the main function where an orthonormic frustrum that represent the reach of the distant light is defined.
-Attention is given to have a good resolution of the object/scene to avoid loss of information and to adjust the dimensions to include any point that we may will later sample to avoid shadow replication.
+The main configuration for computing the depth map is done in the main function where an orthonormic frustrum that represent the reach of the distant light(from the sun) is defined.
+Attention is given towards having a good resolution of the object/scene in order to avoid a loss of information and towards adjusting the dimensions to include any point that we may later sample to avoid shadow replication.
+
 
 As mentioned in the documentation the shader and framebuffer are simplified for the depth computation and the result is stored in a texture loaded at slot 0.
 The reference Model class has been modified to allow this slot to be unused.
+
 
 Then the combined view and projection matrix is passed as a uniformed to the main shader and used in conjunction with the Model matrix to sample the depth map.
 A shadow acne is present and required a small bias to provide a good result.
@@ -50,12 +53,16 @@ An optimisation could be to only update one buffer with a vec6 and set the accor
 Another possibility would be to send only the life of the particle to the vertex shader and let him interpolate relative position and color from a uniform-given origin.
 
 Look and feel have been configured using had hoc number dispersed in shader and dedicated code, reusing the code is not possible.
+For the thruster the particle stream is visually enhanced by a diffuse lightning in the object shader that act as if the particles were emitting light
 
 ### Geometric explosion
 
-The geometric shader subdivide a triangle primitive in 3 using the centroid as the new vertex. 
-It then create 3 new primitive (shards) that are expanding radially from the particle center proportionally to the particle life.
-Shard that may have clipped the object have been redirected using a magic condition to provide quick visual enhancement. 
+The idea is to create a visual explosion effect if a particle hit the object. 
+To do that the geometric shader subdivide a triangle primitive in 3 using the computed centroid as a new vertex. 
+Then the shader creates 3 new primitive(simulating shards) that are expanding radially from the particle center.
+The expansion is controlled by the particle life as defined in the processor.
+
+Shard that may have clipped the object have been redirected using a magic condition to provide a quick visual enhancement. 
 
 ### Collision management
 
