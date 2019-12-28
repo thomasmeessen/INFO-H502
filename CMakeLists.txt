@@ -23,7 +23,7 @@ include(ExternalProject)
 include( ${CMAKE_CURRENT_SOURCE_DIR}/External-stbImage.cmake)
 
 
-include_directories("${PROJECT_SOURCE_DIR}/Include" "${PROJECT_SOURCE_DIR}/vendors/stb")
+include_directories("${PROJECT_SOURCE_DIR}/Include" "${STB_INCLUDE_DIRS}")
 
 
 set(SRC_FILES
