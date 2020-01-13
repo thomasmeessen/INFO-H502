@@ -20,7 +20,7 @@ glm::vec3 cameraFront;
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 float fov = 45;
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void process_key(GLFWwindow* window, float &angle);
+void process_key(GLFWwindow* window, float &angle, float &radius, float &longitude);
 
 int main(int argc, char * argv[]) {
 
@@ -102,8 +102,8 @@ int main(int argc, char * argv[]) {
     GLuint dephtFBO, depthMap;
     generateShadowFBO(dephtFBO, depthMap);
     // -- Light viewpoint configuration
-    glm::vec3 lightPos (0.01f,30.0f,0.01f); // Far to get te impression of // rays
-    float near_plane = 25.0f, far_plane = 35.0f;
+    glm::vec3 lightPos (0.00f,10.0f,0.001f);
+    float near_plane = 5.0f, far_plane = 15.0f;
     glm::mat4 lightProjection = glm::ortho(-0.45f, 0.45f, -0.45f, 0.45f, near_plane, far_plane);
     glm::mat4 lightView = glm::lookAt(
             lightPos,
@@ -144,13 +144,18 @@ int main(int argc, char * argv[]) {
     */
     // ## Camera
     float angle = 0.1f;
+    float radius = 1.5;
+    float angle2 = 0.0f;
 
     while (glfwWindowShouldClose(mWindow) == 0) {
-        process_key(mWindow, angle);
+        process_key(mWindow, angle, radius, angle2);
 
         // ### Camera rotation around Y axis
         angle = (auto_move)? angle + 0.0025f: angle;
-        viewerPos = glm::vec3(1.5*cos(angle),1.5 * cos(angle),1.5*sin(angle));
+
+        viewerPos = (glm::vec3) (glm::vec4(radius,radius ,radius,0.0) * glm::rotate(glm::mat4(1.0f), angle2, glm::vec3(1.0,0.0,0.0))
+                * glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0,1.0,0.0)));
+
         if(reset_orientation){
             cameraFront = - viewerPos;
         }
@@ -273,7 +278,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
         fov = 45.0f;
 }
 
-void process_key(GLFWwindow* window, float &angle){
+void process_key(GLFWwindow* window, float &angle, float &radius, float &longitude){
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
@@ -285,7 +290,7 @@ void process_key(GLFWwindow* window, float &angle){
         reset_orientation = true;
     }
     if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        angle = 300.0f;
+        angle = 270.0f;
         reset_orientation = true;
     }
     if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
@@ -296,6 +301,35 @@ void process_key(GLFWwindow* window, float &angle){
         auto_move = true;
     }
     if(glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
+        auto_move = false;
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        angle -= 0.01;
+        auto_move = false;
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        angle += 0.01;
+        auto_move = false;
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        radius -= 0.01;
+        auto_move = false;
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        radius += 0.01;
+        auto_move = false;
+    }
+    if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        longitude -= 0.01;
+        auto_move = false;
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        longitude += 0.01;
         auto_move = false;
     }
 }

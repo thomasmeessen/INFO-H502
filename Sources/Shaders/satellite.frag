@@ -38,26 +38,27 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 }
 
 vec4 thruster_diffuse_color(vec3 pos, vec3 normal){
-    vec3 purple_thruster_pos = vec3(-0.159,0,0);
+    vec3 purple_thruster_pos = vec3(-0.18,0,0);
     vec3 yellow_thruster_pos = vec3(-0.28,0,0);
     float purple_light_dist = length(purple_thruster_pos - pos);
     vec4 purple_contribution = vec4(0);
-    float purple_range = 0.08;
-    if (purple_light_dist < purple_range){
+    float max_range = 0.12;
+    float purple_range = 0.09;
+    if (purple_light_dist < max_range){
         vec3 purple_light_dir = normalize(purple_thruster_pos - pos);
-        float purple_diffuseStrength = (min(max(dot(purple_light_dir, normal ),0.5), 0.0) + 0.5);
+        float purple_diffuseStrength = (max(dot(purple_light_dir, normal ),0.3) + 0.3);
         vec4 purple_color = vec4(128.0f/255.0f,0.0f,107.0/255.0f,1.0);
-        purple_contribution = purple_diffuseStrength * purple_color * (1- purple_light_dist/purple_range);
+        purple_contribution = purple_diffuseStrength * purple_color * max((1- purple_light_dist/purple_range),0.0);
     }
 
     float yellow_light_dist = length(yellow_thruster_pos - pos);
     vec4 yello_contrib = vec4(0);
     float yellow_range = 0.12;
-    if (yellow_light_dist < yellow_range){
+    if (yellow_light_dist < max_range){
         vec3 yellow_light_dir = normalize(yellow_thruster_pos - pos);
-        float yellow_diffuseStrength = (min(max(dot(yellow_light_dir, normal ),0.5), 0.0) + 0.5);
-        vec4 yellow = vec4(128.0f/255.0f,0.0f,107.0/255.0f,1.0)*0.2 + vec4(1.0f,1.0f,0,1.0) *0.8;
-        yello_contrib = yellow_diffuseStrength * yellow * (1- yellow_light_dist/yellow_range);
+        float yellow_diffuseStrength = (max(dot(yellow_light_dir, normal ),0.3) + 0.1);
+        vec4 yellow = vec4(1.0f,1.0f,0,1.0);
+        yello_contrib = yellow_diffuseStrength * yellow * max((1- yellow_light_dist/yellow_range),0.0);
     }
 
     return yello_contrib + purple_contribution;
