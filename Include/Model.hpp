@@ -169,17 +169,20 @@ private:
             // Diffuse: texture_diffuseN
             // Specular: texture_specularN
             // Normal: texture_normalN
-
-            // 1. Diffuse std::maps
-            std::vector<Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-            textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-            // 2. Specular std::maps
-            std::vector<Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-            textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
             // 3. Normal std::maps
             // OBJ format do not make the distinction between normal and height map (just bump)
             std::vector<Texture> normalMaps = this->loadMaterialTextures(material, aiTextureType_HEIGHT, "normal_map");
             textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+
+            // 1. Diffuse std::maps
+            std::vector<Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+            textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+
+            // 2. Specular std::maps
+            std::vector<Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+            textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+
         }
         
         // Return a mesh object created from the extracted mesh data
@@ -197,6 +200,7 @@ private:
             mat->GetTexture(type, i, &str);
             // Check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
             GLboolean skip = false;
+
             for(GLuint j = 0; j < textures_loaded.size(); j++)
             {
                 if(textures_loaded[j].path == str)
@@ -237,13 +241,15 @@ GLint TextureFromFile(const char* path, std::string directory)
     // Assign texture to ID
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-    glGenerateMipmap(GL_TEXTURE_2D);	
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     // Parameters
+
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
     glBindTexture(GL_TEXTURE_2D, 0);
     stbi_image_free(image);
     return textureID;

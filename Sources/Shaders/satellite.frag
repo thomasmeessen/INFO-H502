@@ -2,7 +2,7 @@
 in vec2 texCoord;
 in vec3 fragPos;
 in mat3 TBN;
-in vec4 FragPosLightSpace;
+in vec3 FragPosLightSpace;
 // Weather effect
 in vec3 closest_light;
 
@@ -21,10 +21,10 @@ uniform sampler2D normal_map1;
 uniform vec3 viewPos;
 
 
-float ShadowCalculation(vec4 fragPosLightSpace)
+float ShadowCalculation(vec3 fragPosLightSpace)
 {
     // perform perspective divide
-    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    vec3 projCoords = fragPosLightSpace.xyz;
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
@@ -79,7 +79,7 @@ void main(){
 
     // DIFFUSE
     // Cosmetic adjustment for diffusive importance
-    float diffStrength = 0.4f;
+    float diffStrength = 0.6f;
     // direction of the main light source
     vec3 lightDir = normalize(lightPos - fragPos);
     // Projection of pixel normal on the light direction and cosmetic adjustment
@@ -90,7 +90,7 @@ void main(){
     vec3 viewDir = normalize(viewPos - fragPos);
     // Direction of the ideal reflection of light on the pixel
     vec3 reflectDir = reflect(-normalize(lightDir), normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 48)  ;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64)  * 0.7;
 
     // SHADOW
     float shadow = ShadowCalculation(FragPosLightSpace);
@@ -99,7 +99,7 @@ void main(){
     // ambient + diffuse (main)
     color = (ambientStrength + diffuseStrength * (1.0 - shadow)) * objectColor ;
     // specular (main)
-    color += spec * (1.0-shadow) * specColor;
+    color += spec * (1.0-shadow) * specColor ;
     // Thruster effect
     vec4 thruster_effect = thruster_diffuse_color(fragPos, normal);
     if (length(thruster_effect) > 0){

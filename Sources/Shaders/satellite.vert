@@ -8,7 +8,7 @@ layout (location=4) in vec3 aBitangent;
 out mat3 TBN;
 out vec2 texCoord;
 out vec3 fragPos;
-out vec4 FragPosLightSpace;
+out vec3 FragPosLightSpace;
 
 
 
@@ -22,9 +22,8 @@ void main() {
     vec3 T = normalize(vec3(Model * vec4( aTangent,0.0)));
     vec3 B = normalize(vec3(Model * vec4(aBitangent, 0.0)));
     TBN = mat3(T, B, N);
-    fragPos =  vec3(Model * vec4(position, 1.0));
+    fragPos =  vec3(Model * vec4(position, 0.0));
     texCoord=texCoo;
-    FragPosLightSpace = lightSpace * vec4(fragPos, 1.0);
-
+    FragPosLightSpace = vec3(lightSpace * vec4(fragPos, 0.0));
 
 }

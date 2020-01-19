@@ -55,28 +55,17 @@ public:
     void Draw(Shader shader) 
     {
 
-        // Bind appropriate textures
-        GLuint diffuseNr = 1;
-        GLuint specularNr = 1;
-        GLuint normalNr = 1;
+
         for(GLuint i = 0; i < this->textures.size(); i++)
         {
             glActiveTexture(GL_TEXTURE0 + i+1); // Active proper texture unit before binding
             // Slot 0 reserved for dephtMap
-            // Retrieve texture number (the N in diffuse_textureN)
-            std::stringstream ss;
-            std::string number;
+
             std::string name = this->textures[i].type;
-            if(name == "texture_diffuse")
-                ss << diffuseNr++; // Transfer GLuint to stream
-            else if(name == "texture_specular")
-                ss << specularNr++; // Transfer GLuint to stream
-            else if(name == "normal_map")
-                ss << normalNr++; // Transfer GLuint to stream
-            number = ss.str();
-            //std::cout<<name + number << "  " << i << std::endl;
+
+            //std::cout<<name + number << " slot: " << i+1 << std::endl;
             // Now set the sampler to the correct texture unit
-            glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i+1);
+            glUniform1i(glGetUniformLocation(shader.ID, (name + "1").c_str()), i+1);
             // And finally bind the texture
             glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
         }
@@ -124,7 +113,7 @@ private:
         // Set the vertex attribute pointers
         // Vertex Positions
         glEnableVertexAttribArray(0);	
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Position));
         // Vertex Normals
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Normal));

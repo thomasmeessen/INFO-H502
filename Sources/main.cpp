@@ -22,6 +22,8 @@ float fov = 45;
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void process_key(GLFWwindow* window, float &angle, float &radius, float &longitude);
 
+
+
 int main(int argc, char * argv[]) {
 
     // Load GLFW and Create a Window
@@ -78,7 +80,6 @@ int main(int argc, char * argv[]) {
     prefix = "../";
     string strTexShaderVertPath = prefix + "Sources/Shaders/satellite.vert";
     string strTexShaderFragPath = prefix + "Sources/Shaders/satellite.frag";
-    //string strTexShaderGeomPath = prefix + "Sources/Shaders/satellite.geom";
     Shader shader(strTexShaderVertPath.c_str(),
                   strTexShaderFragPath.c_str());
     shader.compile();
@@ -101,6 +102,7 @@ int main(int argc, char * argv[]) {
     // -- Texture and VBO generation
     GLuint dephtFBO, depthMap;
     generateShadowFBO(dephtFBO, depthMap);
+    shader.setInteger("depthMap", 0);
     // -- Light viewpoint configuration
     glm::vec3 lightPos (0.00f,10.0f,0.001f);
     float near_plane = 5.0f, far_plane = 15.0f;
@@ -134,18 +136,14 @@ int main(int argc, char * argv[]) {
     glEnable(GL_DEPTH_TEST);
     // Accept fragment if it closer to the camera than the former one
     glDepthFunc(GL_LESS);
-    // ## HDR
-    /*
-    GLuint hdr_frame_buffer;
-    glGenFramebuffers(1, &hdr_frame_buffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, hdr_frame_buffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, scr_width, scr_height, 0, GL_RGBA, GL_FLOAT, NULL);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    */
+
     // ## Camera
-    float angle = 0.1f;
+    float angle =  180.0f;
     float radius = 1.5;
     float angle2 = 0.0f;
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     while (glfwWindowShouldClose(mWindow) == 0) {
         process_key(mWindow, angle, radius, angle2);
@@ -156,7 +154,7 @@ int main(int argc, char * argv[]) {
         viewerPos = (glm::vec3) (glm::vec4(radius,radius ,radius,0.0) * glm::rotate(glm::mat4(1.0f), angle2, glm::vec3(1.0,0.0,0.0))
                 * glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0,1.0,0.0)));
 
-        if(reset_orientation){
+        if(reset_orientation || auto_move){
             cameraFront = - viewerPos;
         }
         glm::mat4 Projection = glm::perspective(glm::radians(fov), (float) width / (float)height, 0.1f, 100.0f);
@@ -190,26 +188,24 @@ int main(int argc, char * argv[]) {
         shader.use();
         // -- Linking the depthMap to reserved 0 slot
         glActiveTexture(GL_TEXTURE0);
-        glUniform1i(glGetUniformLocation(shader.ID, "depthMap"), 0);
         glBindTexture(GL_TEXTURE_2D, depthMap);
+
         shader.setVector3f("lightPos", lightPos);
-        shader.setFloat("ambientStrength", 0.13);
+        shader.setFloat("ambientStrength", 0.10);
         glm::mat4 mvp = Projection * viewCamera * Model;
         shader.setMatrix4("MVP", mvp);
         shader.setMatrix4("lightSpace", lightSpace );
         shader.setMatrix4("Model", glm::mat4(Model));
-        shader.setVector3f("viewPos",viewerPos );
-        shader.setList3("light_part_list", luminescent_particles_position);
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        shader.setVector3f("viewPos", viewerPos );
         aquaModel.Draw(shader);
+
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
 
         // ### Render thrust effect
         particleManager.draw(parShader,  Projection * viewCamera * Model );
-
-
-
 
         // ### Render Sky-Box
         glDepthFunc(GL_LEQUAL);
@@ -218,8 +214,6 @@ int main(int argc, char * argv[]) {
         glBindVertexArray(skyboxVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
         glDepthFunc(GL_LESS);
@@ -241,7 +235,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     lastY = ypos;
     pitch = glm::degrees(asin(-glm::normalize(viewerPos).y));
     yaw = glm::degrees(acos(-glm::normalize(viewerPos).x / cos(glm::radians(pitch))));
-        reset_orientation = false;
+    cameraFront = glm::normalize(- viewerPos);
+    reset_orientation = false;
     }
 
     float xoffset = xpos - lastX;
@@ -261,10 +256,12 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     if(pitch < -89.0f)
     pitch = -89.0f;
 
+
     glm::vec3 front;
     front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
     front.y = sin(glm::radians(pitch));
     front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
     cameraFront = glm::normalize(front);
 }
 

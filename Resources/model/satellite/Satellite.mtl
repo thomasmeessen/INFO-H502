@@ -11,7 +11,7 @@ Ni 1.000000
 d 1.000000
 illum 2
 map_kd satellite_Antenna_BaseColor.jpg
-map_ks satellite_Antenna_Metallic.jpg
+map_ks satellite_Antenna_Metallic.bmp
 map_bump satellite_Antenna_Normal.jpg
 
 newmtl Couro
@@ -37,7 +37,7 @@ Ni 1.000000
 d 1.000000
 illum 2
 map_kd satellite_Pinos_BaseColor.jpg
-map_ks satellite_Pinos_Metallic.jpg
+map_ks satellite_Pinos_Metallic.bmp
 map_bump satellite_Pinos_Normal.jpg
 
 newmtl Placas
@@ -50,7 +50,7 @@ Ni 1.000000
 d 1.000000
 illum 2
 map_kd satellite_Placas_BaseColor.jpg
-map_ks satellite_Placas_Metallic.jpg
+map_ks satellite_Placas_Metallic.bmp
 map_bump satellite_Placas_Normal.jpg
 
 newmtl Satélite
@@ -63,5 +63,5 @@ Ni 1.000000
 d 1.000000
 illum 2
 map_kd satellite_Satellite_baseColor.jpg
-map_ks satellite_Satelite_Metallic.jpg
+map_ks satellite_Satelite_Metallic.bmp
 map_bump satellite_Satelite_Normal.jpg

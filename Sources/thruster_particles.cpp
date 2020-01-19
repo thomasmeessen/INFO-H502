@@ -42,8 +42,6 @@ void ParticleManager::draw(Shader particleShader, glm::mat4 mvp) {
     glVertexAttribDivisor(1, 1);
     // Change the color
     glVertexAttribDivisor(2, 1);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
     glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 14, nbrParticles);
     glBindVertexArray(0);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
